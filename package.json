@@ -7,6 +7,7 @@
     "test": "test"
   },
   "scripts": {
+    "start": "node backend/server.js",
     "test": "jest"
   },
   "repository": {
@@ -21,6 +22,7 @@
   },
   "homepage": "https://github.com/Shinra3245/IS_LAB-U2-3#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^5.1.0"
   },
   "devDependencies": {
