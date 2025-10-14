@@ -1,0 +1,23 @@
+{
+  "name": "is_lab-u2-3",
+  "version": "1.0.0",
+  "description": "Act U2-3 Javascript, técnicas de desarrollo y uso de Test Driven",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shinra3245/IS_LAB-U2-3.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shinra3245/IS_LAB-U2-3/issues"
+  },
+  "homepage": "https://github.com/Shinra3245/IS_LAB-U2-3#readme"
+}
