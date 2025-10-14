@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/Shinra3245/IS_LAB-U2-3/issues"
   },
-  "homepage": "https://github.com/Shinra3245/IS_LAB-U2-3#readme"
+  "homepage": "https://github.com/Shinra3245/IS_LAB-U2-3#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }
