@@ -21,7 +21,6 @@ taskForm.addEventListener('submit', async (event) => {
     const taskData = { title, description };
 
     try {
-        // Asumiendo que el backend corre en http://localhost:3000 y el endpoint es /tasks
         const response = await fetch('http://localhost:3000/tasks', {
             method: 'POST', // Routing/endpoints REST 
             headers: {

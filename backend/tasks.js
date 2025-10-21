@@ -26,10 +26,8 @@ function createTaskObject(title, description) {
 function addTask(tasks, title, description) {
     // 1. Usa la función extraída para crear el objeto.
     const newTask = createTaskObject(title, description); 
-
     // 2. Persistencia (Guardado)
     tasks.push(newTask);
-
     return newTask;
 }
 
