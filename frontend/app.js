@@ -7,8 +7,8 @@ const taskList = document.getElementById('task-list');
 
 
 taskForm.addEventListener('submit', async (event) => {
-    event.preventDefault(); 
-    
+    event.preventDefault();
+
     const title = taskTitle.value.trim();
     const description = taskDescription.value.trim();
 
@@ -16,12 +16,13 @@ taskForm.addEventListener('submit', async (event) => {
         alert('El título de la tarea no puede estar vacío.');
         return;
     }
-    
+
     // Objeto de la nueva tarea
     const taskData = { title, description };
 
+    // ...
     try {
-        const response = await fetch('http://localhost:3000/tasks', {
+        const response = await fetch('/tasks', {
             method: 'POST', // Routing/endpoints REST 
             headers: {
                 'Content-Type': 'application/json',
@@ -37,8 +38,8 @@ taskForm.addEventListener('submit', async (event) => {
         const newTask = await response.json(); // Recibe la tarea guardada (con ID, estado, etc.)
 
         // Paso 5: Renderizar la nueva tarea
-        renderTask(newTask); 
-        
+        renderTask(newTask);
+
 
         taskTitle.value = '';
         taskDescription.value = '';
@@ -56,7 +57,7 @@ function renderTask(task) {
     taskElement.className = 'task-item'; // Agrega estilos para distinguirlo
 
     // Se usa un atributo de datos para referencia futura (ej. para la HU2, HU3 o eliminar)
-    taskElement.setAttribute('data-id', task.id); 
+    taskElement.setAttribute('data-id', task.id);
 
     // 2. Definir el contenido interno del elemento (HTML)
     // Se incluye el título, la descripción y un marcador de estado.
