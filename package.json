@@ -11,7 +11,7 @@
     "test": "jest"
   },
   "repository": {
-    "type": "git",
+      "type": "git",
     "url": "git+https://github.com/Shinra3245/IS_LAB-U2-3.git"
   },
   "keywords": [],
@@ -29,3 +29,4 @@
     "jest": "^30.2.0"
   }
 }
+  

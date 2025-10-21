@@ -1,5 +1,9 @@
+//modulo path de frontend
+const path = require('path');
+
 // /backend/server.js
 const express = require('express');
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
 const cors = require('cors');
 
 const { addTask } = require('./tasks'); 
