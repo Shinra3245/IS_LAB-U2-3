@@ -3,12 +3,12 @@ const path = require('path');
 
 // /backend/server.js
 const express = require('express');
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
 const cors = require('cors');
 
 const { addTask } = require('./tasks'); 
 
 const app = express();
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
 const port = 3000;
 
 let globalTasks = []; 
