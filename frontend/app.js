@@ -20,7 +20,6 @@ taskForm.addEventListener('submit', async (event) => {
     // Objeto de la nueva tarea
     const taskData = { title, description };
 
-    // ...
     try {
         const response = await fetch('/tasks', {
             method: 'POST', // Routing/endpoints REST 
