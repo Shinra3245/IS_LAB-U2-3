@@ -11,7 +11,7 @@
     "test": "jest"
   },
   "repository": {
-      "type": "git",
+    "type": "git",
     "url": "git+https://github.com/Shinra3245/IS_LAB-U2-3.git"
   },
   "keywords": [],
@@ -23,10 +23,10 @@
   "homepage": "https://github.com/Shinra3245/IS_LAB-U2-3#readme",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "jest": "^30.2.0"
   }
 }
-  
