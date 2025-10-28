@@ -1,10 +1,4 @@
-/*
- * STYLES.CSS
- * Tema: Neon Azul (Modo Oscuro)
- * Enfocado en: Visibilidad y estética moderna para App "To-Do"
- */
 
-/* === 1. Reseteo Básico y Fuente Global === */
 *,
 *::before,
 *::after {
@@ -12,39 +6,39 @@
 }
 
 body {
-    /* Fuente moderna y limpia */
+   
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
         Arial, sans-serif;
     
-    /* Base de modo oscuro */
-    background-color: #111827; /* Azul oscuro/gris */
-    color: #e0e0e0; /* Texto claro */
+   
+    background-color: #111827;
+    color: #e0e0e0;
     
     margin: 0;
     padding: 20px;
     line-height: 1.6;
 }
 
-/* === 2. Títulos y Separadores === */
+
 h1 {
     text-align: center;
-    color: #00f2ff; /* Neon Cyan */
+    color: #00f2ff;
     
-    /* Efecto de brillo (glow) */
+   
     text-shadow: 0 0 5px rgba(0, 242, 255, 0.5),
                  0 0 10px rgba(0, 242, 255, 0.3);
     margin-bottom: 30px;
 }
 
 h2 {
-    color: #3a86ff; /* Azul brillante */
+    color: #3a86ff;
     border-bottom: 2px solid #3a86ff;
     padding-bottom: 8px;
     margin-top: 40px;
     letter-spacing: 0.5px;
 }
 
-/* Separador horizontal con estilo */
+
 hr {
     border: none;
     height: 1px;
@@ -54,19 +48,19 @@ hr {
     width: 80%;
 }
 
-/* === 3. Estilos del Formulario (Inputs Neón) === */
+
 #task-form {
     max-width: 500px;
     margin: 20px auto;
     padding: 25px;
     
-    /* Estilo "glassmorphism" ligero sobre fondo oscuro */
-    background: rgba(31, 41, 55, 0.7); /* Card oscura semi-transparente */
+   
+    background: rgba(31, 41, 55, 0.7);
     backdrop-filter: blur(5px);
     
     border-radius: 12px;
     border: 1px solid #3a86ff;
-    box-shadow: 0 0 20px rgba(58, 134, 255, 0.2); /* Brillo azul suave */
+    box-shadow: 0 0 20px rgba(58, 134, 255, 0.2);
     
     display: flex;
     flex-direction: column;
@@ -79,29 +73,29 @@ hr {
     font-size: 16px;
     padding: 12px 15px;
     
-    background-color: #111827; /* Fondo del input igual al body */
+    background-color: #111827;
     color: #f0f0f0;
     
-    border: 1px solid #4b5563; /* Borde gris */
+    border: 1px solid #4b5563;
     border-radius: 8px;
     width: 100%;
     
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Placeholder visible */
+
 #task-form input[type="text"]::placeholder,
 #task-form textarea::placeholder {
     color: #9ca3af;
     opacity: 1;
 }
 
-/* Efecto Neón al enfocar (focus) */
+
 #task-form input[type="text"]:focus,
 #task-form textarea:focus {
     outline: none;
-    border-color: #00f2ff; /* Borde Neon Cyan */
-    box-shadow: 0 0 10px rgba(0, 242, 255, 0.5); /* Brillo Neon Cyan */
+    border-color: #00f2ff;
+    box-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
 }
 
 #task-form textarea {
@@ -109,14 +103,14 @@ hr {
     resize: vertical;
 }
 
-/* Botón de Submit (CTA principal) */
+
 #task-form button[type="submit"] {
     font-family: inherit;
     font-size: 16px;
     font-weight: bold;
     padding: 12px 20px;
     
-    background-color: #3a86ff; /* Azul brillante */
+    background-color: #3a86ff;
     color: #ffffff;
     
     border: none;
@@ -127,25 +121,25 @@ hr {
 }
 
 #task-form button[type="submit"]:hover {
-    background-color: #00f2ff; /* Neon Cyan en hover */
-    color: #111827; /* Texto oscuro para contraste */
+    background-color: #00f2ff;
+    color: #111827;
     box-shadow: 0 0 15px rgba(0, 242, 255, 0.6);
-    transform: translateY(-2px); /* Ligero levantamiento */
+    transform: translateY(-2px);
 }
 
-/* === 4. Estilos de la Lista de Tareas (Cards) === */
+
 #task-list {
     max-width: 800px;
     margin: 30px auto;
 }
 
 .task-item {
-    background: #1f2937; /* Color de card oscuro */
+    background: #1f2937;
     padding: 20px;
     margin-bottom: 15px;
     border-radius: 10px;
     
-    /* Borde lateral de acento */
+   
     border-left: 5px solid #3a86ff; 
     
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -160,18 +154,18 @@ hr {
 .task-item h3 {
     margin-top: 0;
     margin-bottom: 10px;
-    color: #00f2ff; /* Título de la tarea en Neón */
+    color: #00f2ff;
     font-size: 1.25rem;
 }
 
 .task-item p {
     margin: 0 0 15px 0;
-    color: #d1d5db; /* Descripción en gris claro */
+    color: #d1d5db;
     font-size: 1rem;
     line-height: 1.5;
 }
 
-/* === 5. Estilos de Estado (Tags) === */
+
 .task-item span {
     display: inline-block;
     padding: 5px 12px;
@@ -182,32 +176,32 @@ hr {
     letter-spacing: 0.5px;
 }
 
-/* Estado Pendiente */
+
 .pending {
-    background-color: #ffab00; /* Ámbar/Naranja neón */
-    color: #111827; /* Texto oscuro para contraste */
+    background-color: #ffab00;
+    color: #111827;
     box-shadow: 0 0 8px rgba(255, 171, 0, 0.5);
 }
 
-/* Estado Completado */
+
 .completed {
-    background-color: #10b981; /* Verde neón/esmeralda */
+    background-color: #10b981;
     color: #111827;
     box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
 }
 
-/* Estilo para el item completo */
+
 .task-item.completed {
-    border-left-color: #10b981; /* Borde verde */
-    opacity: 0.7; /* Atenuar la tarea completada */
+    border-left-color: #10b981;
+    opacity: 0.7;
 }
 
 .task-item.completed h3 {
     text-decoration: line-through;
-    color: #9ca3af; /* Color de título atenuado */
+    color: #9ca3af;
 }
 
-/* === 6. Scrollbar (Opcional, mejora estética) === */
+
 ::-webkit-scrollbar {
     width: 8px;
 }
@@ -221,3 +215,88 @@ hr {
 ::-webkit-scrollbar-thumb:hover {
     background: #00f2ff;
 }
+
+
+.task-item {
+    background: #1f2937;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border-left: 5px solid #3a86ff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s, opacity 0.3s;
+    
+   
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.task-content {
+    flex-grow: 1;
+}
+
+
+.task-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+
+.task-actions button {
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: bold;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+
+.complete-btn {
+    background-color: #10b981;
+    color: #111827;
+}
+.complete-btn:hover {
+    background-color: #34d399;
+    transform: scale(1.05);
+}
+
+
+.task-item.completed .complete-btn {
+    background-color: #ffab00;
+    color: #111827;
+}
+.task-item.completed .complete-btn:hover {
+    background-color: #fbbf24;
+}
+
+
+.delete-btn {
+    background-color: #ef4444;
+    color: #ffffff;
+}
+.delete-btn:hover {
+    background-color: #f87171;
+    transform: scale(1.05);
+}
+
+
+
+
+.task-item span.status {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 10px;
+}
+
