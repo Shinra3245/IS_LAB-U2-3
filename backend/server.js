@@ -23,14 +23,14 @@ app.post('/tasks', (req, res) => {
     }
 
     const sql = `INSERT INTO tasks (title, description) VALUES (?, ?)`;
-    
+
     // 'function()' se usa para poder acceder a 'this.lastID'
-    db.run(sql, [title, description || null], function(err) {
+    db.run(sql, [title, description || null], function (err) {
         if (err) {
             console.error('Error al insertar en la BD:', err.message);
             return res.status(500).json({ error: 'Error interno del servidor.' });
         }
-        
+
         // Devolvemos la tarea recién creada consultándola por su ID
         db.get(`SELECT * FROM tasks WHERE id = ?`, [this.lastID], (err, row) => {
             if (err) {
@@ -44,7 +44,7 @@ app.post('/tasks', (req, res) => {
 // READ (Leer todas)
 app.get('/tasks', (req, res) => {
     const sql = `SELECT * FROM tasks ORDER BY createdAt DESC`;
-    
+
     db.all(sql, [], (err, rows) => {
         if (err) {
             console.error('Error al consultar la BD:', err.message);
@@ -54,10 +54,45 @@ app.get('/tasks', (req, res) => {
     });
 });
 
+// UPDATE (Actualizar Título/Descripción) - NUEVO
+app.patch('/tasks/:id', (req, res) => {
+    const { id } = req.params;
+    const { title, description } = req.body;
+
+    // Validación simple
+    if (!title) {
+        return res.status(400).json({ error: 'El título no puede estar vacío.' });
+    }
+
+    const sql = `
+        UPDATE tasks 
+        SET title = ?, description = ? 
+        WHERE id = ?
+    `;
+
+    db.run(sql, [title, description || null, id], function (err) {
+        if (err) {
+            console.error('Error al actualizar (PATCH) en la BD:', err.message);
+            return res.status(500).json({ error: 'Error interno del servidor.' });
+        }
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Tarea no encontrada.' });
+        }
+
+        // Devolvemos la tarea actualizada
+        db.get(`SELECT * FROM tasks WHERE id = ?`, [id], (err, row) => {
+            if (err) {
+                return res.status(500).json({ error: 'Error al recuperar la tarea actualizada.' });
+            }
+            res.status(200).json(row);
+        });
+    });
+});
+
 // UPDATE (Marcar como completada/pendiente)
 app.put('/tasks/:id', (req, res) => {
     const { id } = req.params;
-    
+
     // Invertimos el estado 'completed'
     const sql = `
         UPDATE tasks 
@@ -65,7 +100,7 @@ app.put('/tasks/:id', (req, res) => {
         WHERE id = ?
     `;
 
-    db.run(sql, [id], function(err) {
+    db.run(sql, [id], function (err) {
         if (err) {
             console.error('Error al actualizar en la BD:', err.message);
             return res.status(500).json({ error: 'Error interno del servidor.' });
@@ -73,7 +108,7 @@ app.put('/tasks/:id', (req, res) => {
         if (this.changes === 0) {
             return res.status(404).json({ error: 'Tarea no encontrada.' });
         }
-        
+
         // Devolvemos la tarea actualizada
         db.get(`SELECT * FROM tasks WHERE id = ?`, [id], (err, row) => {
             if (err) {
@@ -89,7 +124,7 @@ app.delete('/tasks/:id', (req, res) => {
     const { id } = req.params;
     const sql = `DELETE FROM tasks WHERE id = ?`;
 
-    db.run(sql, [id], function(err) {
+    db.run(sql, [id], function (err) {
         if (err) {
             console.error('Error al eliminar en la BD:', err.message);
             return res.status(500).json({ error: 'Error interno del servidor.' });
