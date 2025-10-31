@@ -42,10 +42,27 @@ app.post('/tasks', (req, res) => {
 });
 
 // READ (Leer todas)
+// READ (Leer todas)
 app.get('/tasks', (req, res) => {
-    const sql = `SELECT * FROM tasks ORDER BY createdAt DESC`;
+    // 1. Obtenemos el query parameter 'search' [cite: 9]
+    const { search } = req.query;
 
-    db.all(sql, [], (err, rows) => {
+    let sql = '';
+    const params = [];
+
+    // 2. Comprobamos si 'search' tiene un valor
+    if (search) {
+        // 3a. Si hay búsqueda, modificamos la SQL para filtrar [cite: 11]
+        sql = `SELECT * FROM tasks WHERE title LIKE ? ORDER BY createdAt DESC`;
+        params.push(`%${search}%`); // 
+    } else {
+        // 3b. Si no hay búsqueda, usamos la consulta original 
+        sql = `SELECT * FROM tasks ORDER BY createdAt DESC`;
+        // params ya es [] por defecto
+    }
+
+    // 4. Ejecutamos la consulta (ya sea la original o la filtrada)
+    db.all(sql, params, (err, rows) => {
         if (err) {
             console.error('Error al consultar la BD:', err.message);
             return res.status(500).json({ error: 'Error interno del servidor.' });
