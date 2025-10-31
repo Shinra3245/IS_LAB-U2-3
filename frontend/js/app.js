@@ -1,77 +1,131 @@
-// /frontend/app.js
-const taskForm = document.getElementById('task-form');
-const taskTitle = document.getElementById('task-title');
-const taskDescription = document.getElementById('task-description');
-const taskList = document.getElementById('task-list');
+// /frontend/app.js (El Controlador)
 
+import * as api from './api.js';
+import * as ui from './ui.js';
 
+// --- Estado de la Aplicación ---
+// Mantenemos un caché local de las tareas para un acceso rápido (ej. para editar)
+const taskCache = new Map();
 
-taskForm.addEventListener('submit', async (event) => {
+// --- Manejadores de Eventos (Event Handlers) ---
+
+/**
+ * Carga inicial de tareas al cargar la página
+ */
+async function handlePageLoad() {
+    try {
+        const tasks = await api.getTasks();
+        ui.clearTaskList();
+        
+        // Limpiamos y poblamos el caché y la UI
+        taskCache.clear();
+        tasks.forEach(task => {
+            taskCache.set(task.id.toString(), task);
+            ui.renderTask(task);
+        });
+        
+    } catch (error) {
+        console.error('Error al cargar tareas:', error);
+        alert('No se pudieron cargar las tareas.');
+    }
+}
+
+/**
+ * Maneja el envío del formulario (Crear o Editar)
+ */
+async function handleSubmitForm(event) {
     event.preventDefault();
+    
+    const taskData = ui.getFormData();
 
-    const title = taskTitle.value.trim();
-    const description = taskDescription.value.trim();
-
-    if (!title) {
+    // Validación (Requisito)
+    if (!taskData.title) {
         alert('El título de la tarea no puede estar vacío.');
         return;
     }
 
-    // Objeto de la nueva tarea
-    const taskData = { title, description };
+    // Decidimos si estamos Creando o Editando
+    const editingId = ui.taskForm.dataset.editingId;
 
     try {
-        const response = await fetch('/tasks', {
-            method: 'POST', // Routing/endpoints REST 
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(taskData),
-        });
+        if (editingId) {
+            // --- Modo Edición (UPDATE) ---
+            const updatedTask = await api.updateTaskContent(editingId, taskData);
+            
+            // Actualizar caché
+            taskCache.set(updatedTask.id.toString(), updatedTask);
+            
+            // Actualizar UI
+            const taskElement = ui.taskList.querySelector(`[data-id="${editingId}"]`);
+            if (taskElement) {
+                ui.updateTaskInUI(taskElement, updatedTask);
+            }
+            
+            ui.resetFormToCreateMode();
 
-        if (!response.ok) {
-            // Manejo de errores de la persistencia/servidor 
-            throw new Error(`Error HTTP: ${response.status}`);
+        } else {
+            // --- Modo Creación (CREATE) ---
+            const newTask = await api.createTask(taskData);
+            
+            // Actualizar caché y UI
+            taskCache.set(newTask.id.toString(), newTask);
+            ui.renderTask(newTask);
+            
+            ui.resetFormToCreateMode(); // Resetea el formulario después de crear
         }
 
-        const newTask = await response.json(); // Recibe la tarea guardada (con ID, estado, etc.)
+    } catch (error) {
+        console.error('Error al guardar la tarea:', error);
+        alert(`Hubo un error al guardar: ${error.message}`);
+    }
+}
 
-        // Paso 5: Renderizar la nueva tarea
-        renderTask(newTask);
+/**
+ * Maneja los clics en la lista de tareas (Completar, Eliminar, Editar)
+ */
+async function handleClickOnTaskList(event) {
+    const target = event.target;
+    const taskElement = target.closest('.task-item');
+    
+    if (!taskElement) return;
 
+    const taskId = taskElement.getAttribute('data-id');
 
-        taskTitle.value = '';
-        taskDescription.value = '';
+    try {
+        // Acción: Eliminar
+        if (target.classList.contains('delete-btn')) {
+            if (!confirm('¿Estás seguro de que deseas eliminar esta tarea?')) return;
+            
+            await api.deleteTask(taskId);
+            taskCache.delete(taskId);
+            ui.removeTaskFromUI(taskElement);
+        }
+        
+        // Acción: Completar/Deshacer
+        if (target.classList.contains('complete-btn')) {
+            const updatedTask = await api.toggleTaskStatus(taskId);
+            taskCache.set(updatedTask.id.toString(), updatedTask);
+            ui.updateTaskInUI(taskElement, updatedTask); // Re-usamos la función de UI
+        }
+        
+        // Acción: Editar
+        if (target.classList.contains('edit-btn')) {
+            // Obtenemos la tarea completa desde nuestro caché local
+            const taskToEdit = taskCache.get(taskId);
+            if (taskToEdit) {
+                ui.loadTaskIntoForm(taskToEdit);
+            }
+        }
 
     } catch (error) {
-        console.error('Error al agregar la tarea:', error);
-        alert('Hubo un error al guardar la tarea. Consulta la consola.');
+        console.error('Error en acción de tarea:', error);
+        alert(`Error: ${error.message}`);
     }
-});
-
-
-function renderTask(task) {
-    // 1. Crear el elemento contenedor principal (e.g., un <div>)
-    const taskElement = document.createElement('div'); // Crea un nuevo nodo 
-    taskElement.className = 'task-item'; // Agrega estilos para distinguirlo
-
-    // Se usa un atributo de datos para referencia futura (ej. para la HU2, HU3 o eliminar)
-    taskElement.setAttribute('data-id', task.id);
-
-    // 2. Definir el contenido interno del elemento (HTML)
-    // Se incluye el título, la descripción y un marcador de estado.
-    taskElement.innerHTML = `
-        <h3>${task.title}</h3>
-        <p>${task.description || 'Sin descripción'}</p>
-        <span class="${task.completed ? 'completed' : 'pending'}">
-            ${task.completed ? 'Completada' : 'Pendiente'}
-        </span>
-        `;
-
-    // 3. Insertar el nuevo nodo al DOM 
-    // Usamos 'prepend' para que las tareas más nuevas aparezcan arriba.
-    taskList.prepend(taskElement); // taskList es la referencia a <div id="task-list">
-
-    // Opcional: Esto ayuda a que el usuario sepa que la tarea se agregó
-    console.log(`Tarea agregada al DOM: ${task.title}`);
 }
+
+// --- Inicialización ---
+
+// "Cableamos" los event listeners a sus manejadores
+window.addEventListener('DOMContentLoaded', handlePageLoad);
+ui.taskForm.addEventListener('submit', handleSubmitForm);
+ui.taskList.addEventListener('click', handleClickOnTaskList);  

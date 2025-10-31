@@ -1,46 +1,142 @@
-//modulo path de frontend
-const path = require('path');
-
 // /backend/server.js
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
-
-const { addTask } = require('./tasks'); 
+const db = require('./database'); // Importamos la base de datos
+// Ya no importamos 'addTask', la lógica de SQL vivirá aquí
 
 const app = express();
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 const port = 3000;
 
-let globalTasks = []; 
+app.use(cors());
+app.use(express.json());
 
-app.use(cors()); 
+// --- CRUD Endpoints ---
 
-app.use(express.json()); 
-
-
+// CREATE (Crear)
 app.post('/tasks', (req, res) => {
-    // 1. Recibir los datos del frontend (body)
     const { title, description } = req.body;
-    
-    // 2. Validaciones simples del backend (opcional pero buena práctica)
+
     if (!title) {
-        // Manejo de errores [cite: 8]
         return res.status(400).json({ error: 'El título de la tarea es obligatorio.' });
     }
 
-    try {
-        // 3. Usar la lógica probada con TDD para agregar la tarea
-        const newTask = addTask(globalTasks, title, description); 
-        
-        // 4. Devolver la tarea creada con éxito (código 201 Created)
-        res.status(201).json(newTask); 
+    const sql = `INSERT INTO tasks (title, description) VALUES (?, ?)`;
 
-    } catch (error) {
-        // 5. Manejo de errores en persistencia [cite: 9]
-        console.error('Error al guardar la tarea:', error);
-        res.status(500).json({ error: 'Error interno del servidor al guardar la tarea.' });
-    }
+    // 'function()' se usa para poder acceder a 'this.lastID'
+    db.run(sql, [title, description || null], function (err) {
+        if (err) {
+            console.error('Error al insertar en la BD:', err.message);
+            return res.status(500).json({ error: 'Error interno del servidor.' });
+        }
+
+        // Devolvemos la tarea recién creada consultándola por su ID
+        db.get(`SELECT * FROM tasks WHERE id = ?`, [this.lastID], (err, row) => {
+            if (err) {
+                return res.status(500).json({ error: 'Error al recuperar la tarea creada.' });
+            }
+            res.status(201).json(row);
+        });
+    });
 });
+
+// READ (Leer todas)
+app.get('/tasks', (req, res) => {
+    const sql = `SELECT * FROM tasks ORDER BY createdAt DESC`;
+
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            console.error('Error al consultar la BD:', err.message);
+            return res.status(500).json({ error: 'Error interno del servidor.' });
+        }
+        res.status(200).json(rows);
+    });
+});
+
+// UPDATE (Actualizar Título/Descripción) - NUEVO
+app.patch('/tasks/:id', (req, res) => {
+    const { id } = req.params;
+    const { title, description } = req.body;
+
+    // Validación simple
+    if (!title) {
+        return res.status(400).json({ error: 'El título no puede estar vacío.' });
+    }
+
+    const sql = `
+        UPDATE tasks 
+        SET title = ?, description = ? 
+        WHERE id = ?
+    `;
+
+    db.run(sql, [title, description || null, id], function (err) {
+        if (err) {
+            console.error('Error al actualizar (PATCH) en la BD:', err.message);
+            return res.status(500).json({ error: 'Error interno del servidor.' });
+        }
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Tarea no encontrada.' });
+        }
+
+        // Devolvemos la tarea actualizada
+        db.get(`SELECT * FROM tasks WHERE id = ?`, [id], (err, row) => {
+            if (err) {
+                return res.status(500).json({ error: 'Error al recuperar la tarea actualizada.' });
+            }
+            res.status(200).json(row);
+        });
+    });
+});
+
+// UPDATE (Marcar como completada/pendiente)
+app.put('/tasks/:id', (req, res) => {
+    const { id } = req.params;
+
+    // Invertimos el estado 'completed'
+    const sql = `
+        UPDATE tasks 
+        SET completed = NOT completed 
+        WHERE id = ?
+    `;
+
+    db.run(sql, [id], function (err) {
+        if (err) {
+            console.error('Error al actualizar en la BD:', err.message);
+            return res.status(500).json({ error: 'Error interno del servidor.' });
+        }
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Tarea no encontrada.' });
+        }
+
+        // Devolvemos la tarea actualizada
+        db.get(`SELECT * FROM tasks WHERE id = ?`, [id], (err, row) => {
+            if (err) {
+                return res.status(500).json({ error: 'Error al recuperar la tarea actualizada.' });
+            }
+            res.status(200).json(row);
+        });
+    });
+});
+
+// DELETE (Eliminar)
+app.delete('/tasks/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = `DELETE FROM tasks WHERE id = ?`;
+
+    db.run(sql, [id], function (err) {
+        if (err) {
+            console.error('Error al eliminar en la BD:', err.message);
+            return res.status(500).json({ error: 'Error interno del servidor.' });
+        }
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Tarea no encontrada.' });
+        }
+        // Respondemos con éxito (204 No Content)
+        res.status(204).send();
+    });
+});
+
 
 app.listen(port, () => {
     console.log(`Servidor de la API corriendo en http://localhost:${port}`);
