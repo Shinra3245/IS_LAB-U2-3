@@ -1,6 +1,5 @@
 // /frontend/api.js
 
-// Usamos la URL base de la API. (Solución B de nuestro chat anterior)
 const BASE_URL = 'http://localhost:3000/tasks';
 
 /**
@@ -12,7 +11,6 @@ const BASE_URL = 'http://localhost:3000/tasks';
 async function fetchAPI(endpoint, options = {}) {
     const response = await fetch(endpoint, options);
     
-    // Si el método es DELETE y la respuesta es 204, no hay JSON, retornamos ok.
     if (response.status === 204) {
         return { ok: true };
     }
@@ -20,7 +18,6 @@ async function fetchAPI(endpoint, options = {}) {
     const data = await response.json();
 
     if (!response.ok) {
-        // Si hay un error, el JSON suele tener un { error: '...' }
         throw new Error(data.error || `Error HTTP: ${response.status}`);
     }
     
@@ -29,8 +26,17 @@ async function fetchAPI(endpoint, options = {}) {
 
 // --- Funciones del CRUD ---
 
-export async function getTasks() {
-    return fetchAPI(BASE_URL);
+/**
+ * MODIFICADO: Lee las tareas, opcionalmente filtradas por un query.
+ * @param {string} query - El término de búsqueda (opcional)
+ */
+export async function getTasks(query = '') {
+    // Si hay 'query', la añade a la URL como un query parameter
+    const url = query 
+        ? `${BASE_URL}?search=${encodeURIComponent(query)}` 
+        : BASE_URL;
+        
+    return fetchAPI(url);
 }
 
 export async function createTask(taskData) {
@@ -46,23 +52,27 @@ export async function createTask(taskData) {
  */
 export async function updateTaskContent(id, taskData) {
     return fetchAPI(`${BASE_URL}/${id}`, {
-        method: 'PATCH', // Usamos PATCH para actualizaciones parciales
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(taskData),
     });
 }
 
 /**
- * Marca una tarea como completada o pendiente (toggle)
+ * Marca una tarea como completada o pendiente
  */
 export async function toggleTaskStatus(id) {
-    return fetchAPI(`${BASE_URL}/${id}`, {
+    return fetchAPI(`${BASE_URL}/${id}/toggle`, {
         method: 'PUT',
     });
 }
 
+/**
+ * Elimina una tarea
+ */
 export async function deleteTask(id) {
-    return fetchAPI(`${BASE_URL}/${id}`, {
+    await fetchAPI(`${BASE_URL}/${id}`, {
         method: 'DELETE',
     });
+    return { ok: true }; // Devuelve un objeto simple para confirmar
 }
