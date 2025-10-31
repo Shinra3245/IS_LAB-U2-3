@@ -357,3 +357,17 @@ hr {
 #search-bar::placeholder {
     color: #6b7280;
 }
+
+/* --- Contenedor de Búsqueda --- */
+.search-container {
+    text-align: center; /* ¡Aquí centramos todo el contenido! */
+
+}
+
+.search-container label {
+    display: block; /* Para que se ponga arriba de la barra */
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #e0e0e0;
+    margin-bottom: 8px; /* Espacio entre la etiqueta y la barra */
+}
