@@ -107,7 +107,7 @@ app.patch('/tasks/:id', (req, res) => {
 });
 
 // UPDATE (Marcar como completada/pendiente)
-app.put('/tasks/:id', (req, res) => {
+app.put('/tasks/:id/toggle', (req, res) => {
     const { id } = req.params;
 
     // Invertimos el estado 'completed'
