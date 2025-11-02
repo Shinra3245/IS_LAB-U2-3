@@ -1,6 +1,6 @@
 // /frontend/api.js
 
-const BASE_URL = 'http://localhost:3000/tasks';
+const BASE_URL = '/tasks';
 
 /**
  * Encapsula la lógica de fetch y manejo de errores.
