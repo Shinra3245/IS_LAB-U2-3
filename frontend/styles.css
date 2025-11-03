@@ -65,6 +65,7 @@ hr {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    align-items: center;
 }
 
 #task-form input[type="text"],
@@ -102,31 +103,6 @@ hr {
     min-height: 100px;
     resize: vertical;
 }
-
-
-#task-form button[type="submit"] {
-    font-family: inherit;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 12px 20px;
-    
-    background-color: #3a86ff;
-    color: #ffffff;
-    
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    
-    transition: background-color 0.3s, box-shadow 0.3s, transform 0.2s;
-}
-
-#task-form button[type="submit"]:hover {
-    background-color: #00f2ff;
-    color: #111827;
-    box-shadow: 0 0 15px rgba(0, 242, 255, 0.6);
-    transform: translateY(-2px);
-}
-
 
 #task-list {
     max-width: 800px;
@@ -371,3 +347,68 @@ hr {
     color: #3a86ff;
     margin-bottom: 8px; /* Espacio entre la etiqueta y la barra */
 }
+/* boton chingon*/
+.button {
+  --main-focus: #2df0e0;
+  --font-color: #323232;
+  --bg-color-sub: rgb(0, 184, 165);
+  --bg-color: rgb(0, 255, 234);
+  --main-color: #323232;
+  position: relative;
+  width: 150px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border: 2px solid var(--main-color);
+  box-shadow: 4px 4px var(--main-color);
+  background-color: var(--bg-color);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.button, .button__icon, .button__text {
+  transition: all 0.3s;
+}
+
+.button .button__text {
+  transform: translateX(22px);
+  color: var(--font-color);
+  font-weight: 600;
+}
+
+.button .button__icon {
+  position: absolute;
+  transform: translateX(109px);
+  height: 100%;
+  width: 39px;
+  background-color: var(--bg-color-sub);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button .svg {
+  width: 20px;
+  fill: var(--main-color);
+}
+
+.button:hover {
+  background: var(--bg-color);
+}
+
+.button:hover .button__text {
+  color: transparent;
+}
+
+.button:hover .button__icon {
+  width: 148px;
+  transform: translateX(0);
+}
+
+.button:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px var(--main-color);
+}
+
+/* fin del boton chingon*/
