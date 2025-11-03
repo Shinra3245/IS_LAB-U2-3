@@ -1,8 +1,8 @@
 // /frontend/ui.js
 // --- Exportación de Elementos del DOM ---
 export const taskForm = document.getElementById('task-form');
-export const taskTitleInput = document.getElementById('task-title');
-export const taskDescriptionInput = document.getElementById('task-description');
+export const taskTitleInput = document.getElementById('task-title2');
+export const taskDescriptionInput = document.getElementById('task-description2');
 export const taskList = document.getElementById('task-list');
 
 // LÍNEA AÑADIDA
