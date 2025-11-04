@@ -1,14 +1,14 @@
 // /frontend/ui.js
 // --- Exportación de Elementos del DOM ---
 export const taskForm = document.getElementById('task-form');
-export const taskTitleInput = document.getElementById('task-title');
-export const taskDescriptionInput = document.getElementById('task-description');
+export const taskTitleInput = document.getElementById('task-title2');
+export const taskDescriptionInput = document.getElementById('task-description2');
 export const taskList = document.getElementById('task-list');
 
 // LÍNEA AÑADIDA
 export const searchBar = document.getElementById('search-bar');
-
-const submitButton = taskForm.querySelector('button[type="submit"]');
+export const submitButton = document.getElementById('sub-button');
+const submitButtonText = submitButton.querySelector('.button__text');
 
 // --- Funciones de Renderizado ---
 
@@ -51,7 +51,7 @@ export function getFormData() {
 export function resetForm() {
     taskForm.reset();
     delete taskForm.dataset.editingId;
-    submitButton.textContent = 'Agregar Tarea';
+    submitButtonText.textContent = 'Añadir Tarea'; 
     taskTitleInput.focus();
 }
 
@@ -59,7 +59,7 @@ export function loadTaskIntoForm(task) {
     taskForm.dataset.editingId = task.id;
     taskTitleInput.value = task.title;
     taskDescriptionInput.value = task.description || '';
-    submitButton.textContent = 'Actualizar Tarea';
+    submitButtonText.textContent = 'Actualizar'; 
     taskTitleInput.focus();
 }
 

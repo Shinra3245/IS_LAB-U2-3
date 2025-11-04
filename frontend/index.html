@@ -5,14 +5,45 @@
     <title>ToDo Team App</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="favicon.png">
-</head>
+<!-- Cargar la fuente PRIMERO -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+    </head>
 <body>
-    <h1>Gestor de Tareas Colaborativo los chicos malotes</h1>
-
+    <h1 id="messageLabel">Gestor de Tareas Colaborativo los chicos malotes</h1>
+    <!-- En el <body>, antes de tu formulario -->
+    <div class="header-container">
+        <h1 id="messageLabel" class="animated-title"></h1>
+    </div>
     <form id="task-form">
-        <input type="text" id="task-title" placeholder="Título de la tarea" required>
-        <textarea id="task-description" placeholder="Descripción (opcional)"></textarea>
-        <button type="submit">Agregar Tarea</button>
+        <!-- Titulo chingooon --> 
+        <div class="brutalist-container">
+        <input
+            id="task-title2"
+            placeholder="Titulo aquí"
+            class="brutalist-input smooth-type"
+            type="text"
+            required
+        />
+        <label class="brutalist-label">TITULO</label>
+        </div>
+        
+        <!--Descripcion perrona-->
+        <div class="brutalist-container">
+        <input
+            id="task-description2"
+            placeholder="DescripciÓn (Opcional)"
+            class="brutalist-input smooth-type"
+            type="text"
+            required
+        />
+        <label class="brutalist-label">DESCRIPCIÓN</label>
+        </div>
+        <button id="sub-button" class="button" type="submit">
+            <span class="button__text">Añadir Tarea</span>
+            <span class="button__icon"><svg class="svg" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><line x1="12" x2="12" y1="5" y2="19"></line><line x1="5" x2="19" y1="12" y2="12"></line></svg></span>
+        </button>
     </form>
 
     <hr>
@@ -28,5 +59,6 @@
         </div>
 
     <script type="module" src="app.js"></script>
+    <script type="module" src="titulo_animado.js"></script>
 </body>
 </html>
