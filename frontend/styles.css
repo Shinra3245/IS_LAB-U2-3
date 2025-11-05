@@ -626,3 +626,73 @@ titulo chingon
 }
 
 /* fin del boton chingon*/
+
+
+/* --- Prioridad--- */
+.task-item[data-priority="1"] {
+    border-color: #ff595e; 
+    box-shadow: 4px 4px #ff595e;
+}
+.task-item[data-priority="2"] {
+    border-color: #ffca3a;
+    box-shadow: 4px 4px #ffca3a;
+}
+.task-item[data-priority="3"] {
+    border-color: #8ac926;
+    box-shadow: 4px 4px #8ac926;
+}
+
+.task-item[data-archived="1"] { 
+    opacity: 0.6;
+    background-color: #374151;
+}
+
+/* --- REGLAS DE FILTRADO--- */
+
+/* * Oculta las archivadas (valor 1) 
+ * cuando la lista está en modo "showing-active"
+ */
+#task-list.showing-active .task-item[data-archived="1"] {
+    display: none !important; /* CORREGIDO DE "true" A "1" */
+}
+
+/* * Oculta las activas (valor 0) 
+ * cuando la lista está en modo "showing-archived"
+ */
+#task-list.showing-archived .task-item[data-archived="0"] {
+    display: none !important; /* CORREGIDO DE "false" A "0" */
+}
+
+/* --- ESTILO PARA EL TEXTO DE PRIORIDAD --- */
+.task-priority {
+    font-size: 0.8rem;
+    font-style: italic;
+    color: #9ca3af;
+    margin-top: 8px;
+    display: block;
+}
+
+/* --- ESTILO PARA EL BOTÓN DE ARCHIVAR --- */
+.archive-btn {
+    background-color: #ffca3a;
+    color: #323232;
+    border: 2px solid #323232;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 2px 2px #323232;
+}
+
+.archive-btn:hover {
+    background-color: #e6b328;
+}
+
+/* --- Arregla el espaciado de botones --- */
+.task-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-start;
+}
