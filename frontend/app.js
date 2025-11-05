@@ -1,27 +1,26 @@
-// /frontend/app.js (El Controlador)
+// /frontend/app.js 
 
 import * as api from './api.js';
 import * as ui from './ui.js';
 
 // --- Estado de la Aplicación ---
 const taskCache = new Map();
+let currentView = 'active'; // NUEVO: 'active' o 'archived'
 
 // --- Lógica de Negocio / Funciones Reutilizables ---
 
-/**
- * FUNCIÓN REFACTORIZADA: Carga tareas desde la API (con o sin query)
- * y las renderiza en la UI.
- */
 async function loadTasks(query = '') {
     try {
-        const tasks = await api.getTasks(query); // 1. Llama a la API
-        ui.clearTaskList(); // 2. Limpia la lista
+        const tasks = await api.getTasks(query); 
+        ui.clearTaskList(); 
         
         taskCache.clear();
         tasks.forEach(task => {
             taskCache.set(task.id.toString(), task);
-            ui.renderTask(task); // 3. Renderiza las tareas
+            ui.renderTask(task);
         });
+        
+        updateTaskView(); 
         
     } catch (error) {
         console.error('Error al cargar tareas:', error);
@@ -31,71 +30,61 @@ async function loadTasks(query = '') {
 
 // --- Manejadores de Eventos (Event Handlers) ---
 
-/**
- * Carga inicial de tareas al cargar la página
- */
 async function handlePageLoad() {
-    await loadTasks(); // Llama a la nueva función sin query
+    await loadTasks(); 
+    ui.taskList.classList.add('showing-active'); // Estado inicial
 }
 
-/**
- * NUEVA FUNCIÓN: Maneja la escritura en la barra de búsqueda.
- */
 async function handleSearch(event) {
-    const query = event.target.value.trim(); 
-    await loadTasks(query); // Llama a loadTasks con el query
+    const query = event.target.value.toLowerCase();
+    await loadTasks(query);
 }
 
-/**
- * Maneja el envío del formulario (Crear o Editar)
- */
 async function handleSubmitForm(event) {
     event.preventDefault();
     
-    const taskData = ui.getFormData();
-
-    if (!taskData.title) {
-        alert('El título de la tarea no puede estar vacío.');
+    let taskData;
+    try {
+        taskData = ui.getFormData(); 
+    } catch (error) {
+        alert(error.message);
         return;
     }
 
-    // Decidimos si estamos Creando o Editando
-    if (taskData.id) {
-        // --- Lógica de Edición ---
-        try {
-            const updatedTask = await api.updateTaskContent(taskData.id, taskData);
+    try {
+        if (taskData.editingId) {
+            // --- Lógica de Actualizar ---
+            const updatedTask = await api.updateTaskContent(taskData.editingId, {
+                title: taskData.title,
+                description: taskData.description,
+                priority: taskData.priority // MODIFICADO
+            });
             
             taskCache.set(updatedTask.id.toString(), updatedTask);
-            const taskElement = ui.findTaskElementById(updatedTask.id);
-            if (taskElement) {
-                ui.updateTaskInUI(taskElement, updatedTask);
-            }
-            
-        } catch (error) {
-            console.error('Error al actualizar tarea:', error);
-            alert(`Error al actualizar: ${error.message}`);
-        }
-    } else {
-        // --- Lógica de Creación ---
-        try {
-            const newTask = await api.createTask(taskData);
+            const taskElement = ui.findTaskElementById(updatedTask.id.toString());
+            ui.updateTaskInUI(taskElement, updatedTask);
+
+        } else {
+            // --- Lógica de Crear ---
+            const newTask = await api.createTask({
+                title: taskData.title,
+                description: taskData.description,
+                priority: taskData.priority // MODIFICADO
+            });
             
             taskCache.set(newTask.id.toString(), newTask);
-            ui.renderTask(newTask); // Renderiza al principio
-
-        } catch (error) {
-            console.error('Error al crear tarea:', error);
-            alert(`Error al crear: ${error.message}`);
+            ui.renderTask(newTask); 
         }
+        
+        ui.clearForm();
+
+    } catch (error) {
+        console.error('Error al guardar la tarea:', error);
+        alert(`Error: ${error.message}`);
     }
-    
-    ui.resetForm();
 }
 
 
-/**
- * Maneja los clics en los botones de la lista (delegación)
- */
 async function handleClickOnTaskList(event) {
     const target = event.target;
     const taskElement = target.closest('.task-item');
@@ -120,12 +109,21 @@ async function handleClickOnTaskList(event) {
             taskCache.set(updatedTask.id.toString(), updatedTask);
             ui.updateTaskInUI(taskElement, updatedTask); 
         }
+
+        //Acción: Archivar/Desarchivar
+        if (target.classList.contains('archive-btn')) {
+            const updatedTask = await api.toggleTaskArchive(taskId);
+            taskCache.set(updatedTask.id.toString(), updatedTask);
+            ui.updateTaskInUI(taskElement, updatedTask); 
+            updateTaskView(); // Refresca la vista
+        }
         
-        // Acción: Editar
+        //Acción: Editar
         if (target.classList.contains('edit-btn')) {
             const taskToEdit = taskCache.get(taskId);
             if (taskToEdit) {
                 ui.loadTaskIntoForm(taskToEdit);
+                window.scrollTo(0, 0);
             }
         }
 
@@ -135,12 +133,35 @@ async function handleClickOnTaskList(event) {
     }
 }
 
-// --- Inicialización ---
+//Maneja el clic en el botón de "Ver Archivadas"
+function handleToggleArchiveView() {
+    currentView = (currentView === 'active') ? 'archived' : 'active';
+    updateTaskView();
+}
 
-// "Cableamos" los event listeners a sus manejadores
+//Actualiza la UI según la vista
+function updateTaskView() {
+    const buttonText = ui.toggleArchiveViewBtn.querySelector('.button__text');
+    
+    if (currentView === 'active') {
+        ui.taskList.classList.remove('showing-archived');
+        ui.taskList.classList.add('showing-active');
+        buttonText.textContent = 'Ver Archivadas';
+        ui.tasksTitleHeading.textContent = 'Tareas Pendientes';
+    } else {
+        ui.taskList.classList.remove('showing-active');
+        ui.taskList.classList.add('showing-archived');
+        buttonText.textContent = 'Ver Activas';
+        ui.tasksTitleHeading.textContent = 'Tareas Archivadas';
+    }
+}
+
+
+// --- Inicialización ---
 window.addEventListener('DOMContentLoaded', handlePageLoad);
 ui.taskForm.addEventListener('submit', handleSubmitForm);
 ui.taskList.addEventListener('click', handleClickOnTaskList);
-
-// NUEVO LISTENER AÑADIDO
 ui.searchBar.addEventListener('input', handleSearch);
+
+//Conecta el botón de archivar
+ui.toggleArchiveViewBtn.addEventListener('click', handleToggleArchiveView);
